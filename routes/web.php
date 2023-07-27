@@ -26,11 +26,17 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
+/* Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard'); */
 
-Route::get('/proyecto/nuevo', [ProyectoController::class, 'create'])->name('profile.edit');
+Route::get('/dashboard', [ProyectoController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/proyecto/create', [ProyectoController::class, 'create'])->middleware(['auth', 'verified'])->name('proyecto.create');
+Route::post('/proyecto/save', [ProyectoController::class, 'save'])->middleware(['auth', 'verified'])->name('proyecto.save');
+Route::get('/proyecto/show/{id}', [ProyectoController::class, 'show'])->middleware(['auth', 'verified'])->name('proyecto.show');
+Route::get('/proyecto/edit/{id}', [ProyectoController::class, 'edit'])->middleware(['auth', 'verified'])->name('proyecto.edit');
+Route::get('/proyecto/update/{id}', [ProyectoController::class, 'update'])->middleware(['auth', 'verified'])->name('proyecto.update');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
