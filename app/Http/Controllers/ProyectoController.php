@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\Proyecto;
+use App\Models\ProyectoCantidad;
+use App\Models\ProyectoEtiqueta;
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -29,11 +31,7 @@ class ProyectoController extends Controller
 
     public function create(Request $request): Response
     {
-        /* $usuarios = User::get(); */
-
-        return Inertia::render('Proyecto/Create'/* , [
-            'usuarios' => $usuarios,
-        ] */);
+        return Inertia::render('Proyecto/Create');
     }
 
     public function save(Request $request)
@@ -55,6 +53,28 @@ class ProyectoController extends Controller
             'imagen_url' => $request->imagen_url,
         ]);
 
+        $etiqueta_total = ProyectoEtiqueta::create([
+            'proyecto_id' => $proyecto->id,
+            'etiqueta' => 'TOTAL',
+        ]);
+
+        $etiqueta_gastado = ProyectoEtiqueta::create([
+            'proyecto_id' => $proyecto->id,
+            'etiqueta' => 'GASTADO',
+        ]);
+
+        $total_cantidad = ProyectoCantidad::create([
+            'proyecto_id' => $proyecto->id,
+            'etiqueta_id' => $etiqueta_total->id,
+            'cantidad' => 0.0
+        ]);
+
+        $gastado_cantidad = ProyectoCantidad::create([
+            'proyecto_id' => $proyecto->id,
+            'etiqueta_id' => $etiqueta_gastado->id,
+            'cantidad' => 0.0
+        ]);
+
         return Redirect::route('dashboard');
     }
 
@@ -67,23 +87,5 @@ class ProyectoController extends Controller
         ]);
     }
 
-    public function edit(Request $request, $id)
-    {
-        $proyecto = Proyecto::find($id);
 
-        return Inertia::render('Proyecto/Edit', [
-            'proyecto' => $proyecto,
-        ]);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $proyecto = Proyecto::find($id);
-
-        
-
-        return Inertia::render('Proyecto/Edit', [
-            'proyecto' => $proyecto,
-        ]);
-    }
 }

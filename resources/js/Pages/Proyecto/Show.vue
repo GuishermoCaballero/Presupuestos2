@@ -32,10 +32,34 @@ const { proyecto } = usePage().props; // Assuming you have "proyecto" data passe
             <!-- <p class="text-gray-600">Cliente: {{ proyecto.cliente }}</p> -->
             <!-- ... and so on ... -->
 
-            <Link
-                :href="route('proyecto.edit', { id: proyecto.id })"
-                class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4"
-                >Editar Proyecto</Link>
+            <div
+              v-for="(etiquetaData, index) in proyecto.totales"
+              :key="index"
+              class="row"
+            >
+              <div class="label">{{ etiquetaData.etiqueta }}</div>
+              <div class="progress-bar">
+                <div
+                  class="progress"
+                  :style="{ width: etiquetaData.cantidad + '%' }"
+                ></div>
+              </div>
+              <div class="percentage">{{ etiquetaData.cantidad }}%</div>
+            </div>
+
+            <div class="m-8">
+              <Link
+                :href="route('proyecto.etiquetas.edit', { id: proyecto.id })"
+                class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8"
+                >Editar Etiquetas</Link
+              >
+
+              <Link
+                :href="route('proyecto.cantidades.edit', { id: proyecto.id })"
+                class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8"
+                >Editar Cantidades</Link
+              >
+            </div>
           </div>
         </div>
       </div>

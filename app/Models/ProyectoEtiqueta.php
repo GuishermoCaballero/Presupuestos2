@@ -8,4 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class ProyectoEtiqueta extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'proyecto_id',
+        'etiqueta',
+    ];
+
+    public function proyecto()
+    {
+        return $this->belongsTo(Proyecto::class);
+    }
+
+    public function cantidad()
+    {
+        return $this->hasOne(ProyectoCantidad::class, 'etiqueta_id');
+    }
+
 }
