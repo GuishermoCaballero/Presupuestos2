@@ -39,4 +39,16 @@ class EtiquetaController extends Controller
 
         return Inertia::location(route('proyecto.etiquetas.edit', ['id' => $id]));
     }
+    
+    public function destroy(Request $request, $id, ProyectoEtiqueta $etiqueta)
+    {
+        // Verificar si la etiqueta pertenece al proyecto antes de eliminarla
+        if ($etiqueta->proyecto_id == $id) {
+            $etiqueta->delete();
+        } else {
+            abort(404, 'La etiqueta no pertenece al proyecto especificado.');
+        }
+
+        return redirect()->back();
+    }
 }
