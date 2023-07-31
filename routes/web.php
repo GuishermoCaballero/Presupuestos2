@@ -3,6 +3,7 @@
 use App\Http\Controllers\CantidadController;
 use App\Http\Controllers\EtiquetaController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProyectoUsuariosController;
 use App\Http\Controllers\ProyectoController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -43,7 +44,13 @@ Route::post('/proyecto/{id}/add-etiqueta', [EtiquetaController::class, 'save'])-
 
 //Cantidades
 Route::get('/proyecto/{id}/edit/cantidades', [CantidadController::class, 'edit'])->middleware(['auth', 'verified'])->name('proyecto.cantidades.edit');
-Route::post('/proyecto/{id}/add-cantidad', [CantidadController::class, 'save'])->middleware(['auth', 'verified'])->name('proyecto.change.cantidad');
+Route::post('/proyecto/{id}/cantidad', [CantidadController::class, 'save'])->middleware(['auth', 'verified'])->name('proyecto.save.cantidad');
+
+//Cantidades
+Route::get('/proyecto/{id}/edit/usuarios', [ProyectoUsuariosController::class, 'index'])->middleware(['auth', 'verified'])->name('proyecto.usuarios.index');
+Route::post('/proyecto/{id}/usuarios', [ProyectoUsuariosController::class, 'save'])->middleware(['auth', 'verified'])->name('proyecto.add.usuario');
+Route::get('/proyecto/{id}/edit/usuario/{usuario}', [ProyectoUsuariosController::class, 'edit'])->middleware(['auth', 'verified'])->name('proyecto.usuarios.edit');
+Route::post('/proyecto/{id}/edit/usuario/{usuario}', [ProyectoUsuariosController::class, 'save_permissions'])->middleware(['auth', 'verified'])->name('proyecto.usuarios.permissions.save');
 
 
 Route::middleware('auth')->group(function () {

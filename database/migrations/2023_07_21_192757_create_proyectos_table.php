@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->longText('descripcion')->nullable();
             $table->string('imagen_url');
+            $table->double('presupuesto');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users'); 

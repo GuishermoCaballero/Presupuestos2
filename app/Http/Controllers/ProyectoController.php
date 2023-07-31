@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project;
@@ -23,6 +24,15 @@ class ProyectoController extends Controller
     public function index(Request $request): Response
     {
         $proyectos = Proyecto::get(); 
+
+        $base_url = 'http://presupuestos2.test/';
+
+        // Loop through the $proyectos array and update the image_url parameter
+        foreach ($proyectos as $proyecto) {
+            // Concatenate the base URL with the existing image_url
+            $proyecto['imagen_url'] = $base_url . urlencode($proyecto['imagen_url']);
+            Log::info($proyecto['imagen_url']);
+        }
 
         return Inertia::render('Dashboard', [
             'proyectos' => $proyectos,
@@ -39,10 +49,22 @@ class ProyectoController extends Controller
         Log::info($request);
 
         $request->validate([
-            'nombre' => ['required'],
-            'descripcion' => ['required'],
-            'imagen_url' => ['required'],
+            'nombre' => ['required', 'string'],
+            'descripcion' => ['required', 'string'],
+            /* 'imagen_url' => ['required'], */
+            'presupuesto' => ['numeric'],
         ]);
+        
+        $path = '';
+
+        if($request->hasFile('imagen_url')){
+            $file = $request->file('imagen_url');
+            $fileName = $file->getClientOriginalName();
+            $path = 'storage/files/'. $fileName;
+
+            Storage::disk('local')->put($path, file_get_contents($file));
+        }
+        //$imagePath = $request->file('imagen_url')->store('imagen_url', 'public');
 
         $user = auth()->user();
 
@@ -50,29 +72,8 @@ class ProyectoController extends Controller
             'user_id' => $user->id,
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
-            'imagen_url' => $request->imagen_url,
-        ]);
-
-        $etiqueta_total = ProyectoEtiqueta::create([
-            'proyecto_id' => $proyecto->id,
-            'etiqueta' => 'TOTAL',
-        ]);
-
-        $etiqueta_gastado = ProyectoEtiqueta::create([
-            'proyecto_id' => $proyecto->id,
-            'etiqueta' => 'GASTADO',
-        ]);
-
-        $total_cantidad = ProyectoCantidad::create([
-            'proyecto_id' => $proyecto->id,
-            'etiqueta_id' => $etiqueta_total->id,
-            'cantidad' => 0.0
-        ]);
-
-        $gastado_cantidad = ProyectoCantidad::create([
-            'proyecto_id' => $proyecto->id,
-            'etiqueta_id' => $etiqueta_gastado->id,
-            'cantidad' => 0.0
+            'imagen_url' => $path,
+            'presupuesto' => $request->presupuesto,
         ]);
 
         return Redirect::route('dashboard');
@@ -80,7 +81,7 @@ class ProyectoController extends Controller
 
     public function show(Request $request, $id)
     {
-        $proyecto = Proyecto::find($id);
+        $proyecto = Proyecto::with('etiquetas')->find($id);
 
         return Inertia::render('Proyecto/Show', [
             'proyecto' => $proyecto,

@@ -12,6 +12,7 @@ class ProyectoEtiqueta extends Model
     protected $fillable = [
         'proyecto_id',
         'etiqueta',
+        'cantidad',
     ];
 
     public function proyecto()

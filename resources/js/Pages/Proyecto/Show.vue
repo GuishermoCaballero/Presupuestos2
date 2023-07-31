@@ -2,6 +2,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, usePage } from "@inertiajs/vue3";
 
+
 const { proyecto } = usePage().props; // Assuming you have "proyecto" data passed from the backend.
 </script>
 
@@ -26,26 +27,25 @@ const { proyecto } = usePage().props; // Assuming you have "proyecto" data passe
               alt="Imagen del proyecto"
               class="w-full rounded-md h-60 object-cover mb-6"
             />
-            <!-- Add any other information you want to display about the proyecto here -->
-            <!-- For example: -->
-            <!-- <p class="text-gray-600">Fecha de inicio: {{ proyecto.fecha_inicio }}</p> -->
-            <!-- <p class="text-gray-600">Cliente: {{ proyecto.cliente }}</p> -->
-            <!-- ... and so on ... -->
 
+
+            <div>Presupuesto: {{ (proyecto.presupuesto).toFixed(2) }} $</div>
+            <br>
             <div
-              v-for="(etiquetaData, index) in proyecto.totales"
+              v-for="(etiqueta, index) in proyecto.etiquetas"
               :key="index"
               class="row"
             >
-              <div class="label">{{ etiquetaData.etiqueta }}</div>
-              <div class="progress-bar">
-                <div
-                  class="progress"
-                  :style="{ width: etiquetaData.cantidad + '%' }"
-                ></div>
-              </div>
-              <div class="percentage">{{ etiquetaData.cantidad }}%</div>
+              <div class="label">{{ etiqueta.etiqueta }}: {{ (etiqueta.cantidad).toFixed(2) }}$ - {{ (etiqueta.cantidad / proyecto.presupuesto * 100).toFixed(2) }}% </div>
+           <br><hr>
             </div>
+            <br>
+            <div>Total Gastado: {{ (proyecto.gastado).toFixed(2) }} $</div>
+            <div>Total Restante: {{ (proyecto.restante).toFixed(2) }} $</div>
+
+
+            <GoogleChart/>    
+
 
             <div class="m-8">
               <Link
@@ -58,6 +58,12 @@ const { proyecto } = usePage().props; // Assuming you have "proyecto" data passe
                 :href="route('proyecto.cantidades.edit', { id: proyecto.id })"
                 class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8"
                 >Editar Cantidades</Link
+              >
+
+              <Link
+                :href="route('proyecto.usuarios.index', { id: proyecto.id })"
+                class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8"
+                >Administrar Usuarios</Link
               >
             </div>
           </div>

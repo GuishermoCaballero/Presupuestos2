@@ -3,6 +3,18 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, usePage } from "@inertiajs/vue3";
 
 const { proyectos } = usePage().props; // Access the "proyectos" data passed from the controller.
+
+
+const getImageUrl = (imageName) => {
+  if (!imageName) {
+    return 'path-to-placeholder-image.png';
+  }
+
+  const storageURL = 'http://presupuestos2.test/storage';
+  const imageUrl = `${storageURL}/${imageName}`;
+
+  return imageUrl;
+};
 </script>
 
 <template>
@@ -32,6 +44,7 @@ const { proyectos } = usePage().props; // Access the "proyectos" data passed fro
             <!-- Display the proyecto data in a cool card format -->
             <h3 class="text-lg font-semibold mb-2">{{ proyecto.nombre }}</h3>
             <p class="text-gray-600 mb-4">{{ proyecto.descripcion }}</p>
+             <!-- src="http://presupuestos2.test/storage/files/andrew%20tate.jpg" -->
             <img
               :src="proyecto.imagen_url"
               alt="Imagen del proyecto"
