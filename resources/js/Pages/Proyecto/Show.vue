@@ -28,6 +28,10 @@ const { proyecto } = usePage().props; // Assuming you have "proyecto" data passe
               class="w-full rounded-md h-60 object-cover mb-6"
             />
 
+            <div class="m-4 w-1/2">
+              <GoogleChart/>
+            </div>
+
 
             <div>Presupuesto: {{ (proyecto.presupuesto).toFixed(2) }} $</div>
             <br>
@@ -44,7 +48,7 @@ const { proyecto } = usePage().props; // Assuming you have "proyecto" data passe
             <div>Total Restante: {{ (proyecto.restante).toFixed(2) }} $</div>
 
 
-            <GoogleChart/>    
+                
 
 
             <div class="m-8">

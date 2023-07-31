@@ -1,6 +1,5 @@
 <template>
     <div>
-      <h2>Vue Js Google Pie Chart Demo</h2>
       <GChart
         type="PieChart"
         :options="options"
@@ -27,7 +26,7 @@
             ['Sleep',    5]
         ],
         options: {
-          width: 1100,
+          width: 700,
           height: 400
         }
       };
