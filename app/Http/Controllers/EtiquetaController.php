@@ -29,12 +29,8 @@ class EtiquetaController extends Controller
         $etiqueta = ProyectoEtiqueta::create([
             'proyecto_id' => $id,
             'etiqueta' => $request->etiqueta,
-        ]);
-
-        $cantidad = ProyectoCantidad::create([
-            'proyecto_id' => $id,
-            'etiqueta_id' => $etiqueta->id,
             'cantidad' => 0.0
+
         ]);
 
         return Inertia::location(route('proyecto.etiquetas.edit', ['id' => $id]));

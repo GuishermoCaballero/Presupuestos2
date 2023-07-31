@@ -15,32 +15,32 @@ class Proyecto extends Model
         'nombre',
         'descripcion',
         'imagen_url',
+        'presupuesto',
     ];
 
-    protected $appends = ['totales'];
+    protected $appends = ['gastado', 'restante'];
 
     public function etiquetas()
     {
         return $this->hasMany(ProyectoEtiqueta::class);
     }
 
-    public function getTotalesAttribute()
-{
-    $etiquetas = $this->etiquetas;
-
-    // Initialize an empty collection to hold the Etiquetas and their quantities
-    $etiquetasWithCantidad = collect();
-
-    foreach ($etiquetas as $etiqueta) {
-        $etiquetaData = [
-            'etiqueta' =>  $etiqueta->etiqueta,
-            'cantidad' => $etiqueta->cantidad->cantidad,
-        ];
-
-        // Add the Etiqueta data to the collection
-        $etiquetasWithCantidad->push($etiquetaData);
+    public function usuarios()
+    {
+        return $this->hasMany(ProyectoUsuario::class);
     }
 
-    return $etiquetasWithCantidad;
-}
+    public function getGastadoAttribute()
+    {
+        $gastado = $this->etiquetas->sum('cantidad');
+        return $gastado;
+    }
+
+    public function getRestanteAttribute()
+    {
+        $gastado = $this->etiquetas->sum('cantidad');
+        $restante = $this->presupuesto - $gastado;
+        return $restante;
+    }
+    
 }

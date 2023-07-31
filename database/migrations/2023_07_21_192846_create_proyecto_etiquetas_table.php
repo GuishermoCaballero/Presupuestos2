@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('proyecto_id');
             $table->string('etiqueta');
+            $table->double('cantidad');
             $table->timestamps();
 
             $table->foreign('proyecto_id')->references('id')->on('proyectos'); 
