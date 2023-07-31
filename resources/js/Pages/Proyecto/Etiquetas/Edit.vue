@@ -7,8 +7,6 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
-import { useInertia } from '@inertiajs/inertia-vue3';
-import { Inertia } from '@inertiajs/inertia';
 
 const { proyecto } = usePage().props; // Access the "proyecto" data passed from the controller.
 
@@ -29,23 +27,6 @@ const submit = () => {
       onFinish: () => form.reset('etiqueta'),
     }
   );
-};
-
-
-const deleteEtiqueta = async (etiquetaId) => {
-  console.log("hola");
-  try {
-    // Call the backend API to delete the etiqueta
-    form.delete(route('proyecto.delete.etiqueta', { id: proyecto.id, etiqueta: etiquetaId }),
-    {
-      /* Options object containing callbacks or other configuration */
-      onFinish: () => form.reset('etiqueta'),
-    }
-    );
-    console.log("hola2");
-  } catch (error) {
-    console.log(error);
-  }
 };
 
 </script>
@@ -73,7 +54,7 @@ const deleteEtiqueta = async (etiquetaId) => {
         >
           <div class="text-lg font-semibold mb-4">{{ etiqueta.etiqueta }}</div>
           <!-- Add a delete button for each etiqueta -->
-          <button class="text-red-500" @click="deleteEtiqueta(etiqueta.id)">Delete</button>
+          <button class="text-red-500">Delete</button>
         </div>
       </div>
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

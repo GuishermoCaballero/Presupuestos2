@@ -40,7 +40,6 @@ Route::get('/proyecto/show/{id}', [ProyectoController::class, 'show'])->middlewa
 //Etiquetas
 Route::get('/proyecto/{id}/edit/etiquetas', [EtiquetaController::class, 'edit'])->middleware(['auth', 'verified'])->name('proyecto.etiquetas.edit');
 Route::post('/proyecto/{id}/add-etiqueta', [EtiquetaController::class, 'save'])->middleware(['auth', 'verified'])->name('proyecto.add.etiqueta');
-Route::delete('/proyecto/{id}/delete-etiqueta/{etiqueta}', [CantidadController::class, 'destroyEtiquetaCantidad'])->middleware(['auth', 'verified'])->name('proyecto.delete.etiqueta');
 
 //Cantidades
 Route::get('/proyecto/{id}/edit/cantidades', [CantidadController::class, 'edit'])->middleware(['auth', 'verified'])->name('proyecto.cantidades.edit');
