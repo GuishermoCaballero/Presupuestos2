@@ -72,7 +72,7 @@ class ProyectoController extends Controller
         if($request->hasFile('imagen_url')){
             $file = $request->file('imagen_url');
             $fileName = $file->getClientOriginalName();
-            $path = 'public/files/'. $fileName;
+            $path = 'storage/files/'. $fileName;
 
             Storage::disk('local')->put($path, file_get_contents($file));
         }
