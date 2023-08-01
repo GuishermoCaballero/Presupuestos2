@@ -44,6 +44,12 @@ const transferencia_submit = () => {
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
         Edita Cantidades en {{ proyecto.nombre }}
       </h2>
+      <Link
+
+          :href="route('proyecto.show', { id: proyecto.id })"
+          class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-8 mt-8"
+          >Atrás</Link
+        >
     </template>
     <div v-if="$page.props.flash.error" class="bg-red-500 p-4 rounded-lg text-white m-4">
       <p class="text-lg">{{ $page.props.flash.error }}</p>
@@ -55,10 +61,10 @@ const transferencia_submit = () => {
     >
       <p class="text-lg">{{ $page.props.flash.success }}</p>
     </div>
-    <div class="py-12">
+    <div class="py-12 bg-gray-300">
       <div class="bg-gray-100 flex items-center justify-center">
         <div class="bg-white rounded-lg shadow-md p-6 w-96">
-          <h1 class="text-2xl font-bold mb-4">Select an option:</h1>
+          <h1 class="text-2xl font-bold mb-4">Elige una opción</h1>
           <select
             v-model="selectedOption"
             class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring focus:ring-indigo-200"
@@ -71,7 +77,7 @@ const transferencia_submit = () => {
           <div v-if="selectedOption === 'transferencia'" class="mt-6">
             <form @submit.prevent="transferencia_submit">
               <div>
-                <InputLabel for="cantidad" value="From" />
+                <InputLabel for="cantidad" value="Desde" />
 
                 <select
                   class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring focus:ring-indigo-200"
@@ -90,7 +96,7 @@ const transferencia_submit = () => {
               </div>
 
               <div>
-                <InputLabel for="cantidad" value="To" />
+                <InputLabel for="cantidad" value="Para" />
 
                 <select
                   class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring focus:ring-indigo-200"

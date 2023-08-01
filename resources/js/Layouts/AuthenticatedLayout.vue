@@ -28,8 +28,8 @@ const showingNavigationDropdown = ref(false);
                             </div>
 
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex text-white">
+                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')" class="text-white">
                                     Proyectos
                                 </NavLink>
                             </div>

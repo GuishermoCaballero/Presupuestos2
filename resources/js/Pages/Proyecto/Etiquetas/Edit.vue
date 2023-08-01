@@ -39,6 +39,12 @@ const submit = () => {
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
         Edita Etiquetas en {{ proyecto.nombre }}
       </h2>
+      <Link
+
+          :href="route('proyecto.show', { id: proyecto.id })"
+          class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-8 mt-8"
+          >Atrás</Link
+        >
     </template>
 
     <div class="py-12">
