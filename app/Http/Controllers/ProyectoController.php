@@ -23,15 +23,27 @@ class ProyectoController extends Controller
 
     public function index(Request $request): Response
     {
-        $proyectos = Proyecto::get(); 
+
+        $user = auth()->user();
+
+        $proyectosAssignedToUser = Proyecto::whereHas('usuarios', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })->get();
+
+        $proyectosCreatedByUser = Proyecto::where('user_id', $user->id)->get(); 
+
+        
+        $proyectos = $proyectosAssignedToUser->concat($proyectosCreatedByUser);
+
+
 
         $base_url = 'http://presupuestos2.test/';
 
         // Loop through the $proyectos array and update the image_url parameter
         foreach ($proyectos as $proyecto) {
             // Concatenate the base URL with the existing image_url
-            $proyecto['imagen_url'] = $base_url . urlencode($proyecto['imagen_url']);
-            Log::info($proyecto['imagen_url']);
+            $proyecto->imagen_url = env('APP_URL'). $proyecto->imagen_url;
+
         }
 
         return Inertia::render('Dashboard', [
@@ -60,11 +72,10 @@ class ProyectoController extends Controller
         if($request->hasFile('imagen_url')){
             $file = $request->file('imagen_url');
             $fileName = $file->getClientOriginalName();
-            $path = 'storage/files/'. $fileName;
+            $path = 'public/files/'. $fileName;
 
             Storage::disk('local')->put($path, file_get_contents($file));
         }
-        //$imagePath = $request->file('imagen_url')->store('imagen_url', 'public');
 
         $user = auth()->user();
 
@@ -81,10 +92,19 @@ class ProyectoController extends Controller
 
     public function show(Request $request, $id)
     {
+        $user = auth()->user();
+        
+        if (!$user->canViewProject($id)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $proyecto = Proyecto::with('etiquetas')->find($id);
+
+        $proyecto->imagen_url = env('APP_URL'). $proyecto->imagen_url;
 
         return Inertia::render('Proyecto/Show', [
             'proyecto' => $proyecto,
+            'usuario' => $user,
         ]);
     }
 

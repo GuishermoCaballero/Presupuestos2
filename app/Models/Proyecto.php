@@ -18,7 +18,7 @@ class Proyecto extends Model
         'presupuesto',
     ];
 
-    protected $appends = ['gastado', 'restante'];
+    protected $appends = ['gastado', 'restante', 'chart'];
 
     public function etiquetas()
     {
@@ -41,6 +41,21 @@ class Proyecto extends Model
         $gastado = $this->etiquetas->sum('cantidad');
         $restante = $this->presupuesto - $gastado;
         return $restante;
+    }
+
+    public function getChartAttribute()
+    {
+        $info = [['Daily Routine', 'Hours per Day']];
+    
+        foreach($this->etiquetas as $etiqueta){
+            $new_value = [$etiqueta->etiqueta, $etiqueta->cantidad];
+            array_push($info, $new_value);
+        }
+
+        $new_value = ['Restante', $this->restante];
+        array_push($info, $new_value);
+
+        return $info;
     }
     
 }

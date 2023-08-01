@@ -15,6 +15,12 @@ class ProyectoUsuariosController extends Controller
 {
     public function index(Request $request, $id)
     {
+
+        $user = auth()->user();
+        if (!$user->canEditUsers($id)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $proyecto = Proyecto::with('usuarios.user')->find($id);
 
         return Inertia::render('Proyecto/Usuarios/Edit', [
@@ -25,7 +31,10 @@ class ProyectoUsuariosController extends Controller
     public function save(Request $request, $id)
     {
 
-        Log::info($request);
+        $user = auth()->user();
+        if (!$user->canEditUsers($id)) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $request->validate([
             'usuario' => ['required', 'email'],

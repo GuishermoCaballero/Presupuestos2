@@ -22,14 +22,16 @@ const getImageUrl = (imageName) => {
 
   <AuthenticatedLayout>
     <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">Proyectos:</h2>
-    </template>
-
+  <div class="flex items-center justify-between">
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Proyectos:</h2>
     <Link
       :href="route('proyecto.create')"
-      class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-      >Crear un proyecto</Link
+      class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-1 focus:ring-offset-white"
     >
+      Crear un proyecto
+    </Link>
+  </div>
+</template>
 
     <div class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

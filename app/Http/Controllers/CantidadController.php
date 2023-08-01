@@ -14,6 +14,12 @@ class CantidadController extends Controller
 {
     public function edit(Request $request, $id)
     {
+
+        $user = auth()->user();
+        if (!$user->canEditQuantities($id)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $proyecto = Proyecto::with('etiquetas')->find($id);
 
         return Inertia::render('Proyecto/Cantidades/Edit', [
@@ -23,6 +29,11 @@ class CantidadController extends Controller
 
     public function save(Request $request, $id)
     {
+
+        $user = auth()->user();
+        if (!$user->canEditQuantities($id)) {
+            abort(403, 'Unauthorized action.');
+        }
 
         if($request->form == 'transferencia'){
 

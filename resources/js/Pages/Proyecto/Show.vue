@@ -2,8 +2,16 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, usePage } from "@inertiajs/vue3";
 
-
 const { proyecto } = usePage().props; // Assuming you have "proyecto" data passed from the backend.
+
+
+const { user } = usePage().props;
+
+// Computed properties to check user permissions
+const canEditTags = () => user.canEditTags(proyecto.id);
+const canEditQuantities = () => user.canEditQuantities(proyecto.id);
+const canEditUsers = () => user.canEditUsers(proyecto.id);
+
 </script>
 
 <template>
@@ -29,7 +37,7 @@ const { proyecto } = usePage().props; // Assuming you have "proyecto" data passe
             />
 
             <div class="m-4 w-1/2">
-              <GoogleChart/>
+              <GoogleChart :data="proyecto.chart"/>
             </div>
 
 
@@ -53,18 +61,23 @@ const { proyecto } = usePage().props; // Assuming you have "proyecto" data passe
 
             <div class="m-8">
               <Link
+                v-if="canEditTags"
                 :href="route('proyecto.etiquetas.edit', { id: proyecto.id })"
                 class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8"
                 >Editar Etiquetas</Link
               >
 
               <Link
+              v-if="canEditQuantities"
+
                 :href="route('proyecto.cantidades.edit', { id: proyecto.id })"
                 class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8"
                 >Editar Cantidades</Link
               >
 
               <Link
+              v-if="canEditUsers"
+
                 :href="route('proyecto.usuarios.index', { id: proyecto.id })"
                 class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8"
                 >Administrar Usuarios</Link
