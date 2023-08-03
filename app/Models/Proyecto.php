@@ -25,6 +25,11 @@ class Proyecto extends Model
         return $this->hasMany(ProyectoEtiqueta::class);
     }
 
+    public function movimientos()
+    {
+        return $this->hasMany(Movimiento::class);
+    }
+
     public function usuarios()
     {
         return $this->hasMany(ProyectoUsuario::class);

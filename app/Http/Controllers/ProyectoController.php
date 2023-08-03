@@ -72,7 +72,7 @@ class ProyectoController extends Controller
         if($request->hasFile('imagen_url')){
             $file = $request->file('imagen_url');
             $fileName = $file->getClientOriginalName();
-            $path = 'storage/files/'. $fileName;
+            $path = 'public/files/'. $fileName;
 
             Storage::disk('local')->put($path, file_get_contents($file));
         }
@@ -83,7 +83,7 @@ class ProyectoController extends Controller
             'user_id' => $user->id,
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
-            'imagen_url' => $path,
+            'imagen_url' => 'storage/files/'.$fileName,
             'presupuesto' => $request->presupuesto,
         ]);
 
@@ -98,7 +98,7 @@ class ProyectoController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $proyecto = Proyecto::with('etiquetas')->find($id);
+        $proyecto = Proyecto::with('etiquetas','usuarios.user','movimientos.user')->find($id);
 
         $proyecto->imagen_url = env('APP_URL'). $proyecto->imagen_url;
 
@@ -107,6 +107,24 @@ class ProyectoController extends Controller
             'usuario' => $user,
         ]);
     }
+
+    public function delete(Request $request, $id)
+    {
+        $user = auth()->user();
+        
+        $proyecto = Proyecto::with('etiquetas')->find($id);
+
+        // Check if the proyecto exists and belongs to the logged-in user
+        if (!$proyecto || $proyecto->user_id !== $user->id) {
+            abort(404); // Or handle the unauthorized action as needed
+        }
+
+        // Perform the deletion
+        $proyecto->delete();
+
+        return redirect()->route('dashboard'); // Redirect to the dashboard after deletion
+    }
+
 
 
 }

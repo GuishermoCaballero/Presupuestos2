@@ -46,6 +46,11 @@ class ProyectoUsuariosController extends Controller
 
         if($usuario_encontrado){
 
+            if($usuario_encontrado->id === $user->id){
+                session()->flash('error', 'No asignarte a ti mismo.');
+                return Inertia::location(route('proyecto.usuarios.index', ['id' => $id]));
+            }
+
             ProyectoUsuario::create([
                 'proyecto_id' => $proyecto->id,
                 'user_id' => $usuario_encontrado->id,

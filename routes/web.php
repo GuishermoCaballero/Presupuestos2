@@ -32,6 +32,7 @@ Route::get('/dashboard', [ProyectoController::class, 'index'])->middleware(['aut
 Route::get('/proyecto/create', [ProyectoController::class, 'create'])->middleware(['auth', 'verified'])->name('proyecto.create');
 Route::post('/proyecto/save', [ProyectoController::class, 'save'])->middleware(['auth', 'verified'])->name('proyecto.save');
 Route::get('/proyecto/show/{id}', [ProyectoController::class, 'show'])->middleware(['auth', 'verified'])->name('proyecto.show');
+Route::delete('/proyecto/delete/{id}', [ProyectoController::class, 'delete'])->middleware(['auth', 'verified'])->name('proyecto.delete');
 
 //Etiquetas
 Route::get('/proyecto/{id}/edit/etiquetas', [EtiquetaController::class, 'edit'])->middleware(['auth', 'verified'])->name('proyecto.etiquetas.edit');
