@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Movimiento;
 use App\Models\Proyecto;
 use App\Models\ProyectoCantidad;
 use App\Models\ProyectoEtiqueta;
@@ -26,18 +27,7 @@ class ProyectoController extends Controller
 
         $user = auth()->user();
 
-        $proyectosAssignedToUser = Proyecto::whereHas('usuarios', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->get();
-
-        $proyectosCreatedByUser = Proyecto::where('user_id', $user->id)->get(); 
-
-        
-        $proyectos = $proyectosAssignedToUser->concat($proyectosCreatedByUser);
-
-
-
-        $base_url = 'http://presupuestos2.test/';
+        $proyectos = $user->proyectos_asignados();
 
         // Loop through the $proyectos array and update the image_url parameter
         foreach ($proyectos as $proyecto) {
@@ -94,17 +84,26 @@ class ProyectoController extends Controller
     {
         $user = auth()->user();
         
-        if (!$user->canViewProject($id)) {
+        if (!$user->proyectos_asignados()->contains('id',$id)) {
             abort(403, 'Unauthorized action.');
         }
 
-        $proyecto = Proyecto::with('etiquetas','usuarios.user','movimientos.user')->find($id);
+        if ($user->proyectos_admin()->contains('id',$id)) {
+            $user->is_admin = true;
+        }else{
+            $user->is_admin = false;
+        }
+
+        $proyecto = Proyecto::with('etiquetas','usuarios.user','user')->find($id);
+
+        $movimientos = Movimiento::where('proyecto_id', $id)->with('user')->orderBy('created_at', 'desc')->get();
 
         $proyecto->imagen_url = env('APP_URL'). $proyecto->imagen_url;
 
         return Inertia::render('Proyecto/Show', [
             'proyecto' => $proyecto,
             'usuario' => $user,
+            'movimientos' => $movimientos,
         ]);
     }
 

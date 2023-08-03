@@ -44,64 +44,28 @@ class User extends Authenticatable
     ];
 
 
-    public function canViewProject($projectId): bool
-    {
-        // Check if the user is the creator of the project
-        if ($this->isProjectCreator($projectId)) {
-            return true;
-        }
-
-        // Check if the user has the 'puede_ver' permission for the project
-        return $this->hasProjectPermission($projectId, 'puede_ver');
+    public function proyectos_asignados() {
+        $proyectosAssignedToUser = Proyecto::whereHas('usuarios', function ($query) {
+            $query->where('user_id', $this->id);
+        })->get();
+    
+        $proyectosCreatedByUser = Proyecto::where('user_id', $this->id)->get();
+    
+        $proyectos = $proyectosAssignedToUser->concat($proyectosCreatedByUser);
+    
+        return $proyectos;
     }
-
-    public function canEditTags($projectId): bool
-    {
-        // Check if the user is the creator of the project
-        if ($this->isProjectCreator($projectId)) {
-            return true;
-        }
-
-        // Check if the user has the 'puede_editar_etiquetas' permission for the project
-        return $this->hasProjectPermission($projectId, 'puede_editar_etiquetas');
+    
+    public function proyectos_admin() {
+        $proyectosAdminByUser = Proyecto::whereHas('usuarios', function ($query) {
+            $query->where('user_id', $this->id)->where('is_admin', true);
+        })->get();
+    
+        $proyectosCreatedByUser = Proyecto::where('user_id', $this->id)->get();
+    
+        $proyectos = $proyectosAdminByUser->concat($proyectosCreatedByUser);
+    
+        return $proyectos;
     }
-
-    public function canEditQuantities($projectId): bool
-    {
-        // Check if the user is the creator of the project
-        if ($this->isProjectCreator($projectId)) {
-            return true;
-        }
-
-        // Check if the user has the 'puede_editar_cantidades' permission for the project
-        return $this->hasProjectPermission($projectId, 'puede_editar_cantidades');
-    }
-
-    public function canEditUsers($projectId): bool
-    {
-        // Check if the user is the creator of the project
-        if ($this->isProjectCreator($projectId)) {
-            return true;
-        }
-
-        // Check if the user has the 'puede_editar_usuarios' permission for the project
-        return $this->hasProjectPermission($projectId, 'puede_editar_usuarios');
-    }
-
-    private function isProjectCreator($projectId): bool
-    {
-        // Check if the user is the creator of the project
-        return Proyecto::where('id', $projectId)
-            ->where('user_id', $this->id)
-            ->exists();
-    }
-
-    private function hasProjectPermission($projectId, $permission): bool
-    {
-        // Check if the user has the specified permission for the project
-        return ProyectoUsuario::where('proyecto_id', $projectId)
-            ->where('user_id', $this->id)
-            ->where($permission, true)
-            ->exists();
-    }
+    
 }

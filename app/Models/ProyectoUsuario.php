@@ -11,10 +11,7 @@ class ProyectoUsuario extends Model
     protected $fillable = [
         'proyecto_id',
         'user_id',
-        'puede_ver',
-        'puede_editar_etiquetas',
-        'puede_editar_cantidades',
-        'puede_editar_usuarios',
+        'is_admin',
     ];
 
     public function proyecto()

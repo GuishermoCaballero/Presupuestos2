@@ -2,14 +2,10 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, usePage } from "@inertiajs/vue3";
 
-const { proyecto } = usePage().props; // Assuming you have "proyecto" data passed from the backend.
+const { proyecto, movimientos, usuario } = usePage().props; // Assuming you have "proyecto" data passed from the backend.
 
 const { user } = usePage().props;
 
-// Computed properties to check user permissions
-const canEditTags = () => user.canEditTags(proyecto.id);
-const canEditQuantities = () => user.canEditQuantities(proyecto.id);
-const canEditUsers = () => user.canEditUsers(proyecto.id);
 </script>
 
 <template>
@@ -57,7 +53,7 @@ const canEditUsers = () => user.canEditUsers(proyecto.id);
               <div>Total Gastado: {{ proyecto.gastado.toFixed(2) }} $</div>
               <div>Total Restante: {{ proyecto.restante.toFixed(2) }} $</div>
 
-              <div class="m-8">
+              <div class="m-8" v-if="usuario.is_admin">
                 <Link
                   :href="route('proyecto.etiquetas.edit', { id: proyecto.id })"
                   class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
@@ -80,7 +76,6 @@ const canEditUsers = () => user.canEditUsers(proyecto.id);
                 </Link>
 
                 <Link
-                  v-if="canEditUsers"
                   :href="route('proyecto.delete', { id: proyecto.id })"
                   method="delete"
                   as="button"
@@ -95,15 +90,16 @@ const canEditUsers = () => user.canEditUsers(proyecto.id);
               <div class="bg-white shadow-md rounded-md p-8 flex-1 mx-4 mb-4 overflow-auto max-h-50vh">
               <h2 class="text-xl font-semibold mb-4">Users Assigned to Proyecto</h2>
               <ul>
+                <li >{{ proyecto.user.name }} - Administrador</li>
 
-                <li v-for="(user, index) in proyecto.usuarios" :key="index">{{ user.user.name }}</li>
+                <li v-for="(user, index) in proyecto.usuarios" :key="index">{{ user.user.name }} - <span v-if="user.is_admin"> Administrador</span><span v-else>Usuario</span> </li>
               </ul>
             </div>
             <!-- Movimientos (scrollable) -->
             <div class="bg-white shadow-md rounded-md p-8 flex-1 mx-4 mb-4 overflow-auto max-h-50vh">
               <h2 class="text-xl font-semibold mb-4">Movimientos</h2>
               <ul>
-                <li v-for="(movimiento, index) in proyecto.movimientos" :key="index" class="mb-4">{{ movimiento.user.name }} - {{ movimiento.valor }}</li>
+                <li v-for="(movimiento, index) in movimientos" :key="index" class="mb-4">{{ movimiento.user.name }} - {{ movimiento.valor }} - {{ new Date(movimiento.created_at).toLocaleDateString() }} </li>
               </ul>
             </div>
             </div>

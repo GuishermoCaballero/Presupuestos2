@@ -14,7 +14,8 @@ class EtiquetaController extends Controller
     public function edit(Request $request, $id)
     {
         $user = auth()->user();
-        if (!$user->canEditTags($id)) {
+        
+        if (!$user->proyectos_admin()->contains('id',$id)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -29,7 +30,8 @@ class EtiquetaController extends Controller
     {
 
         $user = auth()->user();
-        if (!$user->canEditTags($id)) {
+        
+        if (!$user->proyectos_admin()->contains('id',$id)) {
             abort(403, 'Unauthorized action.');
         }
         

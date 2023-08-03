@@ -17,7 +17,8 @@ class ProyectoUsuariosController extends Controller
     {
 
         $user = auth()->user();
-        if (!$user->canEditUsers($id)) {
+        
+        if (!$user->proyectos_admin()->contains('id',$id)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -32,7 +33,8 @@ class ProyectoUsuariosController extends Controller
     {
 
         $user = auth()->user();
-        if (!$user->canEditUsers($id)) {
+        
+        if (!$user->proyectos_admin()->contains('id',$id)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -54,10 +56,7 @@ class ProyectoUsuariosController extends Controller
             ProyectoUsuario::create([
                 'proyecto_id' => $proyecto->id,
                 'user_id' => $usuario_encontrado->id,
-                'puede_ver' => false,
-                'puede_editar_etiquetas' => false,
-                'puede_editar_cantidades' => false,
-                'puede_editar_usuarios' => false,
+                'is_admin' => false,
             ]);
 
             session()->flash('success', 'Usuario añadido correctamente');
@@ -75,15 +74,18 @@ class ProyectoUsuariosController extends Controller
 
     public function edit(Request $request, $id, $usuario)
     {
+        $user = auth()->user();
+        
+        if (!$user->proyectos_admin()->contains('id',$id)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $proyecto = Proyecto::find($id);
 
         $usuario = ProyectoUsuario::with('user')->find($usuario);
 
         $permissionColumns = [
-            'puede_ver',
-            'puede_editar_etiquetas',
-            'puede_editar_cantidades',
-            'puede_editar_usuarios',
+            'is_admin',
         ];
         
         // Loop through the permission columns and convert the 1s and 0s to true and false
@@ -100,23 +102,24 @@ class ProyectoUsuariosController extends Controller
 
     public function save_permissions(Request $request, $id, $usuario)
     {
-        Log::info($request);
+
+        $user = auth()->user();
+        
+        if (!$user->proyectos_admin()->contains('id',$id)) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $proyecto = Proyecto::find($id);
 
         $usuario = ProyectoUsuario::with('user')->find($usuario);
 
         $request->validate([
-            'puede_ver' => ['required', 'boolean'],
-            'puede_editar_etiquetas' => ['required', 'boolean'],
-            'puede_editar_cantidades' => ['required', 'boolean'],
-            'puede_editar_usuarios' => ['required', 'boolean'],
+            'is_admin' => ['required', 'boolean'],
+           
         ]);
 
-        $usuario->puede_ver = $request->puede_ver;
-        $usuario->puede_editar_etiquetas = $request->puede_editar_etiquetas;
-        $usuario->puede_editar_cantidades = $request->puede_editar_cantidades;
-        $usuario->puede_editar_usuarios = $request->puede_editar_usuarios;
+        $usuario->is_admin = $request->is_admin;
+       
         $usuario->save();
 
         session()->flash('success', 'Permisos actualizados correctamente');

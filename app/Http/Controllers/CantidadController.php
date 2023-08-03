@@ -6,6 +6,7 @@ use App\Models\Movimiento;
 use App\Models\Proyecto;
 use App\Models\ProyectoCantidad;
 use App\Models\ProyectoEtiqueta;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -16,11 +17,12 @@ class CantidadController extends Controller
     {
 
         $user = auth()->user();
-        if (!$user->canEditQuantities($id)) {
+        
+        if (!$user->proyectos_admin()->contains('id',$id)) {
             abort(403, 'Unauthorized action.');
         }
 
-        $proyecto = Proyecto::with('etiquetas')->find($id);
+        $proyecto = Proyecto::with('etiquetas','usuarios.user','user')->find($id);
 
         return Inertia::render('Proyecto/Cantidades/Edit', [
             'proyecto' => $proyecto,
@@ -31,7 +33,7 @@ class CantidadController extends Controller
     {
 
         $user = auth()->user();
-        if (!$user->canEditQuantities($id)) {
+        if (!$user->proyectos_admin()->contains('id',$id)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -43,12 +45,18 @@ class CantidadController extends Controller
                 'from' => ['required', 'numeric'],
                 'to' => ['required', 'numeric'],
                 'cantidad' => ['required','numeric'],
+                'quien' => ['required','numeric'],
             ]);
 
             $proyecto = Proyecto::find($id);
 
             $etiqueta_from = ProyectoEtiqueta::findOrFail($request->from);
             $etiqueta_to = ProyectoEtiqueta::findOrFail($request->to);
+
+            if($etiqueta_from->id === $etiqueta_to->id){
+                session()->flash('error', 'Por favor elige otra etiqueta de destinatario.');
+                return Inertia::location(route('proyecto.cantidades.edit', ['id' => $id]));
+            }
 
             $usuario = auth()->user();
 
@@ -63,9 +71,11 @@ class CantidadController extends Controller
                 $etiqueta_to->cantidad = $etiqueta_to->cantidad + $request->cantidad;
                 $etiqueta_to->save();
 
+                $autor = User::find($request->quien);
+
                 $movimiento = Movimiento::create([
                     'proyecto_id' => $proyecto->id,
-                    'user_id' => $usuario->id,
+                    'user_id' => $autor->id,
                     'valor' => 'Transfirió ' . $request->cantidad . '$ de ' . $etiqueta_from->etiqueta .' a ' . $etiqueta_to->etiqueta . '.',
                 ]);
 
@@ -81,6 +91,7 @@ class CantidadController extends Controller
                 'etiqueta' => ['required', 'numeric'],
                 'accion' => ['required', 'string'],
                 'cantidad' => ['required','numeric'],
+                'quien' => ['required','numeric'],
             ]);
 
             $proyecto = Proyecto::find($id);
@@ -101,9 +112,11 @@ class CantidadController extends Controller
                     $etiqueta->cantidad = $nueva_cantidad;
                     $etiqueta->save();
 
+                    $autor = User::find($request->quien);
+
                     $movimiento = Movimiento::create([
                         'proyecto_id' => $proyecto->id,
-                        'user_id' => $usuario->id,
+                        'user_id' => $autor->id,
                         'valor' => 'Ha añadido ' . $request->cantidad . '$ a ' . $etiqueta->etiqueta .'.',
                     ]);
                     
@@ -129,9 +142,11 @@ class CantidadController extends Controller
                     $etiqueta->cantidad = $nueva_cantidad;
                     $etiqueta->save();
 
+                    $autor = User::find($request->quien);
+
                     $movimiento = Movimiento::create([
                         'proyecto_id' => $proyecto->id,
-                        'user_id' => $usuario->id,
+                        'user_id' => $autor->id,
                         'valor' => 'Ha quitado ' . $request->cantidad . '$ a ' . $etiqueta->etiqueta.'.',
                     ]);
                     

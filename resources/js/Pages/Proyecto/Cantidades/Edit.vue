@@ -18,6 +18,7 @@ const transferencia_form = useForm({
   from: "",
   to: "",
   cantidad: "",
+  quien: "",
 });
 
 const cambio_form = useForm({
@@ -25,6 +26,8 @@ const cambio_form = useForm({
   etiqueta: "",
   accion: "",
   cantidad: "",
+  quien: "",
+
 });
 
 const cambio_submit = () => {
@@ -129,6 +132,28 @@ const transferencia_submit = () => {
                 <InputError class="mt-2" :message="transferencia_form.errors.cantidad" />
               </div>
 
+              <div>
+                <InputLabel for="cantidad" value="Quien realiza el movimiento" />
+
+                <select
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring focus:ring-indigo-200"
+                  v-model="transferencia_form.quien"
+                >
+                  <option :value="proyecto.user.id" >
+                      {{ proyecto.user.name }} (Administrador)
+                  </option>
+                  <option
+                    v-for="usuario in proyecto.usuarios"
+                    :key="usuario.id"
+                    :value="usuario.user.id"
+                  >
+                    {{ usuario.user.name }}
+                  </option>
+                </select>
+
+                <InputError class="mt-2" :message="transferencia_form.errors.quien" />
+              </div>
+
               <div class="flex items-center justify-end mt-4">
                 <PrimaryButton
                   class="ml-4"
@@ -189,6 +214,28 @@ const transferencia_submit = () => {
                 />
 
                 <InputError class="mt-2" :message="cambio_form.errors.cantidad" />
+              </div>
+
+              <div>
+                <InputLabel for="cantidad" value="Quien realiza el movimiento" />
+
+                <select
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring focus:ring-indigo-200"
+                  v-model="cambio_form.quien"
+                >
+                  <option :value="proyecto.user.id" >
+                      {{ proyecto.user.name }} (Administrador)
+                  </option>
+                  <option
+                    v-for="usuario in proyecto.usuarios"
+                    :key="usuario.id"
+                    :value="usuario.user.id"
+                  >
+                    {{ usuario.user.name }}
+                  </option>
+                </select>
+
+                <InputError class="mt-2" :message="cambio_form.errors.quien" />
               </div>
 
               <div class="flex items-center justify-end mt-4">

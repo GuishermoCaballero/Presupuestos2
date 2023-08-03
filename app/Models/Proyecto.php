@@ -20,6 +20,11 @@ class Proyecto extends Model
 
     protected $appends = ['gastado', 'restante', 'chart'];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function etiquetas()
     {
         return $this->hasMany(ProyectoEtiqueta::class);
