@@ -4,16 +4,6 @@ import { Head, Link, usePage } from "@inertiajs/vue3";
 
 const { proyectos } = usePage().props; // Access the "proyectos" data passed from the controller.
 
-const getImageUrl = (imageName) => {
-  if (!imageName) {
-    return "path-to-placeholder-image.png";
-  }
-
-  const storageURL = "http://presupuestos2.test/storage";
-  const imageUrl = `${storageURL}/${imageName}`;
-
-  return imageUrl;
-};
 </script>
 
 <template>

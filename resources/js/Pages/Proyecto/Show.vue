@@ -88,7 +88,7 @@ const { user } = usePage().props;
 
             <div>
               <div class="bg-white shadow-md rounded-md p-8 flex-1 mx-4 mb-4 overflow-auto max-h-50vh">
-              <h2 class="text-xl font-semibold mb-4">Users Assigned to Proyecto</h2>
+              <h2 class="text-xl font-semibold mb-4">Usuarios Asignados </h2>
               <ul>
                 <li >{{ proyecto.user.name }} - Administrador</li>
 
