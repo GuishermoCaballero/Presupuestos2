@@ -1,7 +1,7 @@
 <template>
   <div>
     <GChart
-      type="PieChart"
+      :type="type"
       :options="options"
       :data="data"
     />
@@ -17,7 +17,8 @@ export default {
     GChart
   },
   props: {
-    data: Array
+    data: Array,
+    type: String
   },
   data() {
     return {

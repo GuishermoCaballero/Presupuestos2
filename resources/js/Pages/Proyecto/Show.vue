@@ -32,8 +32,20 @@ const { user } = usePage().props;
               />
 
               <div class="m-4 w-1/2">
-                <GoogleChart :data="proyecto.chart" />
+                <h2 class="text-xl font-semibold mb-4">Gastos</h2>
+
+                <GoogleChart :data="proyecto.chart" type="PieChart" />
               </div>
+              
+              <div class="m-4 w-1/2">
+                <h2 class="text-xl font-semibold mb-4">Gastos por Usuario</h2>
+
+                <GoogleChart :data="proyecto.user_chart" type="ColumnChart" />
+              </div>
+
+
+
+
 
               <div>Presupuesto: {{ proyecto.presupuesto.toFixed(2) }} $</div>
               <br />
@@ -88,21 +100,23 @@ const { user } = usePage().props;
 
             <div>
               <div class="bg-white shadow-md rounded-md p-8 flex-1 mx-4 mb-4 overflow-auto max-h-50vh">
-              <h2 class="text-xl font-semibold mb-4">Usuarios Asignados </h2>
-              <ul>
-                <li >{{ proyecto.user.name }} - Administrador</li>
+                <h2 class="text-xl font-semibold mb-4">Usuarios Asignados </h2>
+                <ul>
+                  <li >{{ proyecto.user.name }} - Administrador</li>
 
-                <li v-for="(user, index) in proyecto.usuarios" :key="index">{{ user.user.name }} - <span v-if="user.is_admin"> Administrador</span><span v-else>Usuario</span> </li>
-              </ul>
+                  <li v-for="(user, index) in proyecto.usuarios" :key="index">{{ user.user.name }} - <span v-if="user.is_admin"> Administrador</span><span v-else>Usuario</span> </li>
+                </ul>
+              </div>
+              <!-- Movimientos (scrollable) -->
+              <div class="bg-white shadow-md rounded-md p-8 flex-1 mx-4 mb-4 overflow-auto max-h-50vh">
+                <h2 class="text-xl font-semibold mb-4">Movimientos</h2>
+                <ul>
+                  <li v-for="(movimiento, index) in movimientos" :key="index" class="mb-4">{{ movimiento.user.name }} - {{ movimiento.valor }} - {{ new Date(movimiento.created_at).toLocaleDateString() }} </li>
+                </ul>
+              </div>
+
             </div>
-            <!-- Movimientos (scrollable) -->
-            <div class="bg-white shadow-md rounded-md p-8 flex-1 mx-4 mb-4 overflow-auto max-h-50vh">
-              <h2 class="text-xl font-semibold mb-4">Movimientos</h2>
-              <ul>
-                <li v-for="(movimiento, index) in movimientos" :key="index" class="mb-4">{{ movimiento.user.name }} - {{ movimiento.valor }} - {{ new Date(movimiento.created_at).toLocaleDateString() }} </li>
-              </ul>
-            </div>
-            </div>
+            
           </div>
         </div>
       </div>
