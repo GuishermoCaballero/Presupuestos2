@@ -68,21 +68,21 @@ const { user } = usePage().props;
               <div class="m-8" v-if="usuario.is_admin">
                 <Link
                   :href="route('proyecto.etiquetas.edit', { id: proyecto.id })"
-                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
+                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
                 >
                   Editar Etiquetas
                 </Link>
 
                 <Link
                   :href="route('proyecto.cantidades.edit', { id: proyecto.id })"
-                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
+                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
                 >
                   Editar Cantidades
                 </Link>
 
                 <Link
                   :href="route('proyecto.usuarios.index', { id: proyecto.id })"
-                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
+                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
                 >
                   Administrar Usuarios
                 </Link>
