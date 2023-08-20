@@ -8,6 +8,7 @@ use App\Models\Proyecto;
 use App\Models\ProyectoCantidad;
 use App\Models\ProyectoEtiqueta;
 use App\Models\User;
+use App\Models\UsuarioGasto;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -32,8 +33,7 @@ class ProyectoController extends Controller
         // Loop through the $proyectos array and update the image_url parameter
         foreach ($proyectos as $proyecto) {
             // Concatenate the base URL with the existing image_url
-            $proyecto->imagen_url = env('APP_URL'). $proyecto->imagen_url;
-
+            $proyecto->imagen_url = env('APP_URL') . $proyecto->imagen_url;
         }
 
         return Inertia::render('Dashboard', [
@@ -56,13 +56,13 @@ class ProyectoController extends Controller
             /* 'imagen_url' => ['required'], */
             'presupuesto' => ['numeric'],
         ]);
-        
+
         $path = '';
 
-        if($request->hasFile('imagen_url')){
+        if ($request->hasFile('imagen_url')) {
             $file = $request->file('imagen_url');
             $fileName = $file->getClientOriginalName();
-            $path = 'public/files/'. $fileName;
+            $path = 'public/files/' . $fileName;
 
             Storage::disk('local')->put($path, file_get_contents($file));
         }
@@ -73,7 +73,7 @@ class ProyectoController extends Controller
             'user_id' => $user->id,
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
-            'imagen_url' => 'storage/files/'.$fileName,
+            'imagen_url' => 'storage/files/' . $fileName,
             'presupuesto' => $request->presupuesto,
         ]);
 
@@ -83,22 +83,27 @@ class ProyectoController extends Controller
     public function show(Request $request, $id)
     {
         $user = auth()->user();
-        
-        if (!$user->proyectos_asignados()->contains('id',$id)) {
+
+        if (!$user->proyectos_asignados()->contains('id', $id)) {
             abort(403, 'Unauthorized action.');
         }
 
-        if ($user->proyectos_admin()->contains('id',$id)) {
+        if ($user->proyectos_admin()->contains('id', $id)) {
             $user->is_admin = true;
-        }else{
+        } else {
             $user->is_admin = false;
         }
 
-        $proyecto = Proyecto::with('etiquetas','usuarios.user','user')->find($id);
+        $proyecto = Proyecto::with('gastos', 'usuarios.user', 'user')->find($id);
 
         $movimientos = Movimiento::where('proyecto_id', $id)->with('user')->orderBy('created_at', 'desc')->get();
 
-        $proyecto->imagen_url = env('APP_URL'). $proyecto->imagen_url;
+
+        $proyecto->imagen_url = env('APP_URL') . $proyecto->imagen_url;
+
+
+        
+       
 
         return Inertia::render('Proyecto/Show', [
             'proyecto' => $proyecto,
@@ -110,7 +115,7 @@ class ProyectoController extends Controller
     public function delete(Request $request, $id)
     {
         $user = auth()->user();
-        
+
         $proyecto = Proyecto::with('etiquetas')->find($id);
 
         // Check if the proyecto exists and belongs to the logged-in user
@@ -124,6 +129,33 @@ class ProyectoController extends Controller
         return redirect()->route('dashboard'); // Redirect to the dashboard after deletion
     }
 
+    public function edit(Request $request, $id): Response
+    {
+        $proyecto = Proyecto::find($id);
 
+        return Inertia::render('Proyecto/Edit', [
+            'proyecto' => $proyecto,
+        ]);
+    }
 
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nombre' => ['required', 'string'],
+            'descripcion' => ['required', 'string'],
+            'presupuesto' => ['numeric'],
+        ]);
+
+        $user = auth()->user();
+
+        $proyecto = Proyecto::find($id);
+
+        $proyecto->nombre = $request->nombre;
+        $proyecto->descripcion = $request->descripcion;
+        $proyecto->presupuesto = $request->presupuesto;
+
+        $proyecto->save();
+
+        return Redirect::route('dashboard');
+    }
 }

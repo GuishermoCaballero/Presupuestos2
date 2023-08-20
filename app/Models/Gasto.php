@@ -5,14 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProyectoEtiqueta extends Model
+class Gasto extends Model
 {
-   /*  use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'proyecto_id',
-        'etiqueta',
+        'id_factura',
+        'nombre',
+        'observacion',
         'cantidad',
+        'cantidad_iva',
+        'anadir_iva',
     ];
 
     public function proyecto()
@@ -20,9 +24,8 @@ class ProyectoEtiqueta extends Model
         return $this->belongsTo(Proyecto::class);
     }
 
-    public function cantidad()
+    public function usuarios()
     {
-        return $this->hasOne(ProyectoCantidad::class, 'etiqueta_id');
-    } */
-
+        return $this->hasMany(UsuarioGasto::class);
+    }
 }

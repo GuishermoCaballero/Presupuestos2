@@ -11,22 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-       /*  Schema::create('proyecto_etiquetas', function (Blueprint $table) {
+        Schema::create('gastos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('proyecto_id');
-            $table->string('etiqueta');
+            $table->string('id_factura')->nullable();
+            $table->string('nombre')->nullable();
+            $table->longText('observacion')->nullable();
             $table->double('cantidad');
+            $table->double('cantidad_iva')->nullable();
+            $table->boolean('anadir_iva')->default(false);
             $table->timestamps();
 
             $table->foreign('proyecto_id')->references('id')->on('proyectos'); 
-        }); */
+
+        });
     }
 
     /**
      * Reverse the migrations.
      */
-    /* public function down(): void
+    public function down(): void
     {
-        Schema::dropIfExists('proyecto_etiquetas');
-    } */
+        Schema::dropIfExists('gastos');
+    }
 };

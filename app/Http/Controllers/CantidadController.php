@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gasto;
 use App\Models\Movimiento;
 use App\Models\Proyecto;
 use App\Models\ProyectoCantidad;
 use App\Models\ProyectoEtiqueta;
 use App\Models\User;
+use App\Models\UsuarioGasto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -17,12 +19,12 @@ class CantidadController extends Controller
     {
 
         $user = auth()->user();
-        
-        if (!$user->proyectos_admin()->contains('id',$id)) {
+
+        if (!$user->proyectos_admin()->contains('id', $id)) {
             abort(403, 'Unauthorized action.');
         }
 
-        $proyecto = Proyecto::with('etiquetas','usuarios.user','user')->find($id);
+        $proyecto = Proyecto::with('gastos', 'usuarios.user', 'user')->find($id);
 
         return Inertia::render('Proyecto/Cantidades/Edit', [
             'proyecto' => $proyecto,
@@ -33,129 +35,62 @@ class CantidadController extends Controller
     {
 
         $user = auth()->user();
-        if (!$user->proyectos_admin()->contains('id',$id)) {
+        if (!$user->proyectos_admin()->contains('id', $id)) {
             abort(403, 'Unauthorized action.');
         }
 
-        if($request->form == 'transferencia'){
+        $request->validate([
+            'factura_id' => ['required', 'string'],
+            'nombre' => ['required', 'string'],
+            'observacion' => ['required', 'string'],
+            'anadir_iva' => ['required', 'boolean'],
+            'cantidad' => ['required', 'numeric'],
+            'quien' => ['required', 'array'],
+        ]);
 
-            Log::info($request);
+        $proyecto = Proyecto::find($id);
 
-            $request->validate([
-                'from' => ['required', 'numeric'],
-                'to' => ['required', 'numeric'],
-                'cantidad' => ['required','numeric'],
-                'quien' => ['required','numeric'],
+        $usuario = auth()->user();
+
+
+        //Comprobar si en el presupuesto restante hay suficiente candidad para sumar
+        if ($proyecto->restante < $request->cantidad) {
+            session()->flash('error', 'No hay suficiente presupuesto restante para añadir este gasto.');
+            return Inertia::location(route('proyecto.cantidades.edit', ['id' => $id]));
+        } else {
+
+            $autor = User::find($request->quien);
+
+            $gasto = Gasto::create([
+                'proyecto_id' => $proyecto->id,
+                'id_factura' => $request->factura_id,
+                'nombre' => $request->nombre,
+                'observacion' => $request->observacion,
+                'anadir_iva' => $request->anadir_iva,
+                'cantidad' => $request->cantidad,
+                'cantidad_iva' => ($request->anadir_iva == True ? $request->cantidad*1.21 : 0),
             ]);
 
-            $proyecto = Proyecto::find($id);
-
-            $etiqueta_from = ProyectoEtiqueta::findOrFail($request->from);
-            $etiqueta_to = ProyectoEtiqueta::findOrFail($request->to);
-
-            if($etiqueta_from->id === $etiqueta_to->id){
-                session()->flash('error', 'Por favor elige otra etiqueta de destinatario.');
-                return Inertia::location(route('proyecto.cantidades.edit', ['id' => $id]));
-            }
-
-            $usuario = auth()->user();
-
-            if($request->cantidad  > $etiqueta_from->cantidad){
-                session()->flash('error', 'No hay cantidad suficiente en '. $etiqueta_from->etiqueta .' para realizar la operación.');
-                return Inertia::location(route('proyecto.cantidades.edit', ['id' => $id]));
-            }else{
-
-                $etiqueta_from->cantidad = $etiqueta_from->cantidad - $request->cantidad;
-                $etiqueta_from->save();
-                
-                $etiqueta_to->cantidad = $etiqueta_to->cantidad + $request->cantidad;
-                $etiqueta_to->save();
-
-                $autor = User::find($request->quien);
-
-                $movimiento = Movimiento::create([
-                    'proyecto_id' => $proyecto->id,
-                    'user_id' => $autor->id,
-                    'valor' => 'Transfirió ' . $request->cantidad . '$ de ' . $etiqueta_from->etiqueta .' a ' . $etiqueta_to->etiqueta . '.',
+            foreach($request->quien as $quien_id){
+/*                 $user = User::find($id);
+ */
+                UsuarioGasto::create([
+                    'gasto_id' => $gasto->id,
+                    'usuario_id' => $quien_id,
+                    'cantidad' => $request->cantidad / count($request->quien),
                 ]);
 
-                session()->flash('success', 'Transferencia realizada correctamente');
-                    
-                return Inertia::location(route('proyecto.cantidades.edit', ['id' => $id]));
-
             }
-            
-        }elseif($request->form == 'cambio'){
 
-            $request->validate([
-                'etiqueta' => ['required', 'numeric'],
-                'accion' => ['required', 'string'],
-                'cantidad' => ['required','numeric'],
-                'quien' => ['required','numeric'],
+            $movimiento = Movimiento::create([
+                'proyecto_id' => $proyecto->id,
+                'user_id' => 1,
+                'valor' => 'Ha gastado ' . $request->cantidad . '$ a ',
             ]);
 
-            $proyecto = Proyecto::find($id);
+            session()->flash('success', 'Gasto añadido correctamente');
 
-            $etiqueta = ProyectoEtiqueta::findOrFail($request->etiqueta);
-
-            $usuario = auth()->user();
-
-            if($request->accion == 'suma'){
-
-                //Comprobar si en el presupuesto restante hay suficiente candidad para sumar
-                if($proyecto->restante < $request->cantidad){
-                    session()->flash('error', 'No hay suficiente presupuesto restante para realizar la operación.');
-                    return Inertia::location(route('proyecto.cantidades.edit', ['id' => $id]));
-                }else{
-                    $nueva_cantidad = $etiqueta->cantidad + $request->cantidad;
-                    
-                    $etiqueta->cantidad = $nueva_cantidad;
-                    $etiqueta->save();
-
-                    $autor = User::find($request->quien);
-
-                    $movimiento = Movimiento::create([
-                        'proyecto_id' => $proyecto->id,
-                        'user_id' => $autor->id,
-                        'valor' => 'Ha añadido ' . $request->cantidad . '$ a ' . $etiqueta->etiqueta .'.',
-                    ]);
-                    
-                    session()->flash('success', 'Suma realizada correctamente');
-                    
-                    return Inertia::location(route('proyecto.cantidades.edit', ['id' => $id]));
-                }
-
-            }elseif($request->accion == 'resta'){
-
-                //Comprobar si en la etiqueta hay suficiente cantidad para restar
-                if($etiqueta->cantidad < $request->cantidad){ 
-
-                    session()->flash('error', 'No hay suficiente cantidad para realizar la operación.');
-                    return Inertia::location(route('proyecto.cantidades.edit', ['id' => $id]));
-
-                }else{
-
-                    //Actualiza etiqueta y añade movimiento
-
-                    $nueva_cantidad = $etiqueta->cantidad - $request->cantidad;
-                    
-                    $etiqueta->cantidad = $nueva_cantidad;
-                    $etiqueta->save();
-
-                    $autor = User::find($request->quien);
-
-                    $movimiento = Movimiento::create([
-                        'proyecto_id' => $proyecto->id,
-                        'user_id' => $autor->id,
-                        'valor' => 'Ha quitado ' . $request->cantidad . '$ a ' . $etiqueta->etiqueta.'.',
-                    ]);
-                    
-                    session()->flash('success', 'Resta realizada correctamente');
-                    
-                    return Inertia::location(route('proyecto.cantidades.edit', ['id' => $id]));
-                    
-                }
-            }
+            return Inertia::location(route('proyecto.cantidades.edit', ['id' => $id]));
         }
     }
 }

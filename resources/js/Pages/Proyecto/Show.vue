@@ -6,6 +6,14 @@ const { proyecto, movimientos, usuario } = usePage().props; // Assuming you have
 
 const { user } = usePage().props;
 
+const formatDate = (dateTime) => {
+  return new Date(dateTime).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+
 </script>
 
 <template>
@@ -36,15 +44,40 @@ const { user } = usePage().props;
 
                 <GoogleChart :data="proyecto.chart" type="PieChart" />
               </div>
-              
+
               <div class="m-4 w-1/2">
                 <h2 class="text-xl font-semibold mb-4">Gastos por Usuario</h2>
 
                 <GoogleChart :data="proyecto.user_chart" type="ColumnChart" />
               </div>
 
-
-
+  <div class="m-4 mt-8 mb-8">
+    <h2 class="text-xl font-semibold mb-4">Gastos por Usuario</h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full border border-gray-200">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="px-4 py-2">Factura Id</th>
+            <th class="px-4 py-2">Fecha</th>
+            <th class="px-4 py-2">Concepto</th>
+            <th class="px-4 py-2">Importe</th>
+            <th class="px-4 py-2">IVA</th>
+            <th class="px-4 py-2">Importe Final</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(gasto, index) in proyecto.gastos" :key="index" :class="index % 2 === 0 ? 'bg-gray-50' : ''">
+            <td class="px-4 py-2">{{ gasto.id_factura }}</td>
+            <td class="px-4 py-2">{{ formatDate(gasto.created_at) }}</td>
+            <td class="px-4 py-2">{{ gasto.nombre }}</td>
+            <td class="px-4 py-2">{{ gasto.cantidad }}</td>
+            <td class="px-4 py-2">{{ gasto.anadir_iva }}</td>
+            <td class="px-4 py-2">{{ gasto.cantidad_iva }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
 
               <div>Presupuesto: {{ proyecto.presupuesto.toFixed(2) }} $</div>
@@ -67,17 +100,10 @@ const { user } = usePage().props;
 
               <div class="m-8" v-if="usuario.is_admin">
                 <Link
-                  :href="route('proyecto.etiquetas.edit', { id: proyecto.id })"
-                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
-                >
-                  Editar Etiquetas
-                </Link>
-
-                <Link
                   :href="route('proyecto.cantidades.edit', { id: proyecto.id })"
                   class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
                 >
-                  Editar Cantidades
+                  Añadir gasto
                 </Link>
 
                 <Link
@@ -85,6 +111,13 @@ const { user } = usePage().props;
                   class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
                 >
                   Administrar Usuarios
+                </Link>
+
+                <Link
+                  :href="route('proyecto.edit', { id: proyecto.id })"
+                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
+                >
+                  Editar Proyecto
                 </Link>
 
                 <Link
@@ -99,24 +132,36 @@ const { user } = usePage().props;
             </div>
 
             <div>
-              <div class="bg-white shadow-md rounded-md p-8 flex-1 mx-4 mb-4 overflow-auto max-h-50vh">
-                <h2 class="text-xl font-semibold mb-4">Usuarios Asignados </h2>
+              <div
+                class="bg-white shadow-md rounded-md p-8 flex-1 mx-4 mb-4 overflow-auto max-h-50vh"
+              >
+                <h2 class="text-xl font-semibold mb-4">Usuarios Asignados</h2>
                 <ul>
-                  <li >{{ proyecto.user.name }} - Administrador</li>
+                  <li>{{ proyecto.user.name }} - Administrador</li>
 
-                  <li v-for="(user, index) in proyecto.usuarios" :key="index">{{ user.user.name }} - <span v-if="user.is_admin"> Administrador</span><span v-else>Usuario</span> </li>
+                  <li v-for="(user, index) in proyecto.usuarios" :key="index">
+                    {{ user.user.name }} - <span v-if="user.is_admin"> Administrador</span
+                    ><span v-else>Usuario</span>
+                  </li>
                 </ul>
               </div>
               <!-- Movimientos (scrollable) -->
-              <div class="bg-white shadow-md rounded-md p-8 flex-1 mx-4 mb-4 overflow-auto max-h-50vh">
+              <div
+                class="bg-white shadow-md rounded-md p-8 flex-1 mx-4 mb-4 overflow-auto max-h-50vh"
+              >
                 <h2 class="text-xl font-semibold mb-4">Movimientos</h2>
                 <ul>
-                  <li v-for="(movimiento, index) in movimientos" :key="index" class="mb-4">{{ movimiento.user.name }} - {{ movimiento.valor }} - {{ new Date(movimiento.created_at).toLocaleDateString() }} </li>
+                  <li
+                    v-for="(movimiento, index) in movimientos"
+                    :key="index"
+                    class="mb-4"
+                  >
+                    {{ movimiento.user.name }} - {{ movimiento.valor }} -
+                    {{ new Date(movimiento.created_at).toLocaleDateString() }}
+                  </li>
                 </ul>
               </div>
-
             </div>
-            
           </div>
         </div>
       </div>

@@ -43,13 +43,13 @@ class Proyecto extends Model
 
     public function getGastadoAttribute()
     {
-        $gastado = $this->etiquetas->sum('cantidad');
+        $gastado = $this->gastos->sum('cantidad');
         return $gastado;
     }
 
     public function getRestanteAttribute()
     {
-        $gastado = $this->etiquetas->sum('cantidad');
+        $gastado = $this->gastos->sum('cantidad');
         $restante = $this->presupuesto - $gastado;
         return $restante;
     }
@@ -58,8 +58,8 @@ class Proyecto extends Model
     {
         $info = [['Daily Routine', 'Hours per Day']];
     
-        foreach($this->etiquetas as $etiqueta){
-            $new_value = [$etiqueta->etiqueta, $etiqueta->cantidad];
+        foreach($this->gastos as $gasto){
+            $new_value = [$gasto->nombre, $gasto->cantidad];
             array_push($info, $new_value);
         }
 
@@ -73,7 +73,6 @@ class Proyecto extends Model
     {
         $info = [['Daily Routine', 'Dinero gastado']];
 
-
         $usuarios = $this->usuarios;
         $users = collect();
         foreach ($usuarios as $usuario) {
@@ -82,31 +81,29 @@ class Proyecto extends Model
         }
         
         $usuario_creador = $this->user;
-        Log::info($usuario_creador);
 
         $concatenated = $users->concat([$usuario_creador]); // Wrap $usuario_creador in an array
 
-    
+        $gastos_ids = $this->gastos->pluck('id')->toArray();
+
         foreach($concatenated as $user){
-
-            $movimientos = Movimiento::where('proyecto_id', $this->id)->where('user_id', $user->id)->where('valor', 'LIKE', '%añadido%')->get();
-            $suma = 0;
-            foreach ($movimientos as $movimiento) {
-                // Use regular expression to extract the numeric value from the column
-                preg_match('/(\d+)\$/', $movimiento->valor, $matches);
-                
-                if (isset($matches[1])) {
-                    $suma += (int)$matches[1]; // Convert to integer and add to amounts array
-                }
-            }
-
-            $new_value = [$user->name, $suma];
+            
+            $gastos = UsuarioGasto::whereIn('gasto_id', $gastos_ids)->where('usuario_id', $user->id)->sum('cantidad');
+            $new_value = [$user->name,$gastos ];
             array_push($info, $new_value);
         }
 
-
-
         return $info;
     }
-    
+
+    public function gastos()
+    {
+        return $this->hasMany(Gasto::class);
+    }
+
+    public function user_gastos()
+    {
+        return $this->hasMany(Gasto::class); // Assuming you have a Gasto model
+    }
+
 }
