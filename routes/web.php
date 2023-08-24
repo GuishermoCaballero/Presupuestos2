@@ -44,6 +44,10 @@ Route::post('/proyecto/{id}/add-etiqueta', [EtiquetaController::class, 'save'])-
 Route::get('/proyecto/{id}/edit/cantidades', [CantidadController::class, 'edit'])->middleware(['auth', 'verified'])->name('proyecto.cantidades.edit');
 Route::post('/proyecto/{id}/cantidad', [CantidadController::class, 'save'])->middleware(['auth', 'verified'])->name('proyecto.save.cantidad');
 
+Route::get('/edit/{id}/gasto', [CantidadController::class, 'update'])->middleware(['auth', 'verified'])->name('proyecto.cantidades.update');
+Route::post('/update/{id}/gasto', [CantidadController::class, 'updatesave'])->middleware(['auth', 'verified'])->name('proyecto.cantidad.save');
+Route::delete('/delete/{id}/gasto', [CantidadController::class, 'delete'])->middleware(['auth', 'verified'])->name('proyecto.gasto.delete');
+
 //Cantidades
 Route::get('/proyecto/{id}/edit/usuarios', [ProyectoUsuariosController::class, 'index'])->middleware(['auth', 'verified'])->name('proyecto.usuarios.index');
 Route::post('/proyecto/{id}/usuarios', [ProyectoUsuariosController::class, 'save'])->middleware(['auth', 'verified'])->name('proyecto.add.usuario');

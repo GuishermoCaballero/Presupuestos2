@@ -67,6 +67,7 @@ const formatDate = (dateTime) => {
             <div v-for="(usuario, index) in proyecto.usuarios">
               <th class="px-4 py-2">{{ usuario.user.name }}</th>
             </div>
+            <th class="px-4 py-2">Editar Gasto</th>
           </tr>
         </thead>
         <tbody>
@@ -75,12 +76,19 @@ const formatDate = (dateTime) => {
             <td class="px-4 py-2">{{ formatDate(gasto.created_at) }}</td>
             <td class="px-4 py-2">{{ gasto.nombre }}</td>
             <td class="px-4 py-2">{{ gasto.cantidad }}</td>
-            <td class="px-4 py-2">{{ gasto.anadir_iva }}</td>
-            <td class="px-4 py-2">{{ gasto.cantidad_iva }}</td>
-            <th class="px-4 py-2">{{ proyecto.user.id }}</th>
-            <div v-for="(usuario, index) in proyecto.usuarios">
-              <th class="px-4 py-2">{{ usuario.user.id }}</th>
-            </div>
+            <td class="px-4 py-2">{{ gasto.anadir_iva ? 'X' : '' }}</td>
+            <td class="px-4 py-2">{{ gasto.cantidad_iva == 0 ? gasto.cantidad :  gasto.cantidad_iva}}</td>
+            <th class="px-4 py-2">{{ gasto.usuarios_id.includes(proyecto.user.id) ? 'X' : '' }}</th>
+
+            <th class="px-4 py-2" v-for="(usuario, index) in proyecto.usuarios">{{ gasto.usuarios_id.includes(usuario.user.id) ? 'X' : '' }}</th>
+            <th class="px-4 py-2">
+              <Link
+                  :href="route('proyecto.cantidades.update', { id: gasto.id })"
+                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
+                >
+                  Editar
+                </Link>
+            </th>
           </tr>
         </tbody>
       </table>

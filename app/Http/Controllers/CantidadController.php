@@ -93,4 +93,107 @@ class CantidadController extends Controller
             return Inertia::location(route('proyecto.cantidades.edit', ['id' => $id]));
         }
     }
+
+    public function update(Request $request,Gasto $id)
+    {
+        Log::info($request);
+        Log::info($id);
+
+        $user = auth()->user();
+
+       /*  if (!$user->proyectos_admin()->contains('id', $id)) {
+            abort(403, 'Unauthorized action.');
+        } */
+
+        $proyecto = Proyecto::with('gastos', 'usuarios.user', 'user')->find($id->proyecto->id);
+        
+        $id->load('usuarios');
+
+        return Inertia::render('Proyecto/Cantidades/Update', [
+            'proyecto' => $proyecto,
+            'gasto' => $id,
+        ]);
+    }
+
+
+    public function updatesave(Request $request,   Gasto $id)
+    {
+
+        $user = auth()->user();
+        /* if (!$user->proyectos_admin()->contains('id', $id)) {
+            abort(403, 'Unauthorized action.');
+        } */
+
+        $request->validate([
+            'id' => ['required', 'numeric'],
+            'factura_id' => ['required', 'string'],
+            'nombre' => ['required', 'string'],
+            'observacion' => ['required', 'string'],
+            'anadir_iva' => ['required', 'boolean'],
+            'cantidad' => ['required', 'numeric'],
+            'quien' => ['required', 'array'],
+        ]);
+
+        $gasto = $id;
+
+        $proyecto = $id->proyecto;
+
+        //Comprobar si en el presupuesto restante hay suficiente candidad para sumar
+        if ($proyecto->restante + $gasto->cantidad < $request->cantidad) {
+            session()->flash('error', 'No hay suficiente presupuesto restante para añadir este gasto.');
+            return Inertia::location(route('proyecto.cantidades.edit', ['id' => $id]));
+        } else {
+
+            $autor = User::find($request->quien);
+
+            $gasto->id_factura = $request->factura_id;
+            $gasto->nombre = $request->nombre;
+            $gasto->observacion = $request->observacion;
+            $gasto->anadir_iva = $request->anadir_iva;
+            $gasto->cantidad = $request->cantidad;
+            $gasto->cantidad_iva = ($request->anadir_iva == True ? $request->cantidad*1.21 : 0);
+            $gasto->save();
+
+            UsuarioGasto::where('gasto_id', $id->id)->delete();
+
+            foreach($request->quien as $quien_id){
+/*                 $user = User::find($id);
+ */
+                UsuarioGasto::create([
+                    'gasto_id' => $gasto->id,
+                    'usuario_id' => $quien_id,
+                    'cantidad' => $request->cantidad / count($request->quien),
+                ]);
+
+            }
+
+            $movimiento = Movimiento::create([
+                'proyecto_id' => $gasto->proyecto->id,
+                'user_id' => 1,
+                'valor' => 'Ha actualizado ' . ($gasto->id_factura ? $gasto->id_factura : $gasto->nombre ),
+            ]);
+
+            session()->flash('success', 'Gasto actualizado correctamente');
+
+            return Inertia::location(route('proyecto.show', ['id' => $proyecto->id]));
+        }
+    }
+
+    public function delete(Request $request,Gasto $id)
+    {
+        $user = auth()->user();
+
+        $proyecto = Proyecto::with('gastos')->find($id->proyecto->id);
+
+        // Check if the proyecto exists and belongs to the logged-in user
+        if (!$proyecto || $proyecto->user_id !== $user->id) {
+            abort(404); // Or handle the unauthorized action as needed
+        }
+
+        UsuarioGasto::where('gasto_id', $id->id)->delete();
+        // Perform the deletion
+        $id->delete();
+
+        return redirect()->route('proyecto.show', ['id' => $proyecto->id]); // Redirect to the dashboard after deletion
+    }
 }

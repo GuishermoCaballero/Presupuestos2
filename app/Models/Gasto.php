@@ -19,6 +19,8 @@ class Gasto extends Model
         'anadir_iva',
     ];
 
+    protected $appends = ['usuarios_id'];
+
     public function proyecto()
     {
         return $this->belongsTo(Proyecto::class);
@@ -27,5 +29,13 @@ class Gasto extends Model
     public function usuarios()
     {
         return $this->hasMany(UsuarioGasto::class);
+    }
+
+    public function getUsuariosIdAttribute()
+    {
+        $ids = $this->usuarios();
+        $ids = $ids->pluck('usuario_id')->toArray();
+        
+        return $ids;
     }
 }
