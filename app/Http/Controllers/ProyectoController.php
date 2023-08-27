@@ -54,7 +54,7 @@ class ProyectoController extends Controller
             'nombre' => ['required', 'string'],
             'descripcion' => ['required', 'string'],
             /* 'imagen_url' => ['required'], */
-            'presupuesto' => ['numeric'],
+            'presupuesto' =>  ['required','numeric','gt:0'],
         ]);
 
         $path = '';
@@ -152,6 +152,15 @@ class ProyectoController extends Controller
 
         $proyecto->nombre = $request->nombre;
         $proyecto->descripcion = $request->descripcion;
+
+
+
+        if ($request->presupuesto < $proyecto->gastado) {
+            session()->flash('error', 'Ya se ha gastado una cantidad mayor a la que tratas de asignar a este proyecto.');
+            return Inertia::location(route('proyecto.edit', ['id' => $id]));
+        }
+
+
         $proyecto->presupuesto = $request->presupuesto;
 
         $proyecto->save();

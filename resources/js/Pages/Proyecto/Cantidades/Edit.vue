@@ -79,7 +79,7 @@ const cambio_submit = () => {
                 <InputError class="mt-2" :message="cambio_form.errors.factura_id" />
               </div>
               <div class="mb-2">
-                <InputLabel for="nombre" value="Nombre" />
+                <InputLabel for="nombre" value="Nombre*" />
 
                 <TextInput
                   id="nombre"
@@ -101,7 +101,7 @@ const cambio_submit = () => {
               </div>
 
               <div class="mb-2">
-                <InputLabel for="cantidad" value="Cantidad" />
+                <InputLabel for="cantidad" value="Cantidad*" />
 
                 <TextInput
                   id="cantidad"
@@ -122,7 +122,7 @@ const cambio_submit = () => {
                   </label>
               </div>
 
-              <div class="mb-2">
+              <!-- <div class="mb-2">
                 <InputLabel for="cantidad_iva" value="Cantidad con IVA" />
 
                 <TextInput
@@ -135,10 +135,10 @@ const cambio_submit = () => {
                 />
 
                 <InputError class="mt-2" :message="cambio_form.errors.cantidad_iva" />
-              </div>
+              </div> -->
 
               <div class="mb-2">
-                <InputLabel for="quien" value="Quien realiza el movimiento" />
+                <InputLabel for="quien" value="Quien realiza el movimiento*" />
 
                 <select
                   class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring focus:ring-indigo-200"

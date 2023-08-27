@@ -40,11 +40,9 @@ class CantidadController extends Controller
         }
 
         $request->validate([
-            'factura_id' => ['required', 'string'],
             'nombre' => ['required', 'string'],
-            'observacion' => ['required', 'string'],
             'anadir_iva' => ['required', 'boolean'],
-            'cantidad' => ['required', 'numeric'],
+            'cantidad' => ['required','numeric','gt:0'],
             'quien' => ['required', 'array'],
         ]);
 

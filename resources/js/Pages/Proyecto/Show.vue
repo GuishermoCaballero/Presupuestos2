@@ -64,9 +64,7 @@ const formatDate = (dateTime) => {
             <th class="px-4 py-2">IVA</th>
             <th class="px-4 py-2">Importe Final</th>
             <th class="px-4 py-2">{{ proyecto.user.name }}</th>
-            <div v-for="(usuario, index) in proyecto.usuarios">
-              <th class="px-4 py-2">{{ usuario.user.name }}</th>
-            </div>
+              <th  v-for="(usuario, index) in proyecto.usuarios" class="px-4 py-2">{{ usuario.user.name }}</th>
             <th class="px-4 py-2">Editar Gasto</th>
           </tr>
         </thead>

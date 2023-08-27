@@ -44,7 +44,24 @@ const submit = () => {
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Editar proyecto</h2>
+            <Link
+
+          :href="route('proyecto.show', { id: proyecto.id })"
+          class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-8 mt-8"
+          >Atrás</Link
+        >
         </template>
+
+        <div v-if="$page.props.flash.error" class="bg-red-500 p-4 rounded-lg text-white m-4">
+      <p class="text-lg">{{ $page.props.flash.error }}</p>
+    </div>
+
+    <div
+      v-if="$page.props.flash.success"
+      class="bg-green-500 p-4 rounded-lg text-white m-4"
+    >
+      <p class="text-lg">{{ $page.props.flash.success }}</p>
+    </div>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
