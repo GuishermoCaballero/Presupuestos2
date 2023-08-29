@@ -50,6 +50,12 @@ const submit = () => {
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Crea un proyecto!</h2>
+            <Link
+
+:href="route('dashboard')"
+class="font-semibold text-gray-600 hover:text-gray-900  focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-8 mt-8"
+>Atrás</Link
+>
         </template>
 
         <div class="py-12">

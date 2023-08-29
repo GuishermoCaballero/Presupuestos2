@@ -104,7 +104,7 @@ function filtrarGastos(valor) {
             <th class="px-4 py-2">
               <Link
                   :href="route('proyecto.cantidades.update', { id: gasto.id })"
-                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
+                  class="font-semibold text-gray-600 hover:text-green-900  focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
                 >
                   Editar
                 </Link>
@@ -137,21 +137,21 @@ function filtrarGastos(valor) {
               <div class="m-8" v-if="usuario.is_admin">
                 <Link
                   :href="route('proyecto.cantidades.edit', { id: proyecto.id })"
-                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
+                  class="font-semibold text-gray-600 hover:text-green-900  focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
                 >
                   Añadir gasto
                 </Link>
 
                 <Link
                   :href="route('proyecto.usuarios.index', { id: proyecto.id })"
-                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
+                  class="font-semibold text-gray-600 hover:text-green-900  focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
                 >
                   Administrar Usuarios
                 </Link>
 
                 <Link
                   :href="route('proyecto.edit', { id: proyecto.id })"
-                  class="font-semibold text-gray-600 hover:text-green-900 dark:text-gray-400 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
+                  class="font-semibold text-gray-600 hover:text-green-900  focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500 m-4 mt-8 transition-colors duration-300 ease-in-out hover:border-b-2 border-transparent hover:border-green-900"
                 >
                   Editar Proyecto
                 </Link>
