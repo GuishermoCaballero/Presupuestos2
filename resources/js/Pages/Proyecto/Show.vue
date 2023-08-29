@@ -14,6 +14,20 @@ const formatDate = (dateTime) => {
   });
 };
 
+function filtrarGastos(valor) {
+  var names = document.getElementsByClassName('gasto-tabla-nombre');
+
+  for (var i = 0; i < names.length; i++) {
+    var name = names[i].textContent.trim(); // Get the content of the element and remove extra spaces
+    
+    if (name.includes(valor)) {
+      names[i].parentNode.style.display = ''; // Show the parent element
+    } else {
+      names[i].parentNode.style.display = 'none'; // Hide the parent element
+    }
+  }
+}
+
 </script>
 
 <template>
@@ -53,6 +67,12 @@ const formatDate = (dateTime) => {
 
   <div class="m-4 mt-8 mb-8">
     <h2 class="text-xl font-semibold mb-4">Gastos por Usuario</h2>
+    <input
+          type="text"
+          placeholder="Buscar gastos"
+          class="w-full px-4 py-2 mb-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+          @keyup="filtrarGastos($event.target.value)"
+        />
     <div class="overflow-x-auto">
       <table class="min-w-full border border-gray-200">
         <thead>
@@ -60,6 +80,7 @@ const formatDate = (dateTime) => {
             <th class="px-4 py-2">Factura Id</th>
             <th class="px-4 py-2">Fecha</th>
             <th class="px-4 py-2">Concepto</th>
+            <th class="px-4 py-2">Observación</th>
             <th class="px-4 py-2">Importe</th>
             <th class="px-4 py-2">IVA</th>
             <th class="px-4 py-2">Importe Final</th>
@@ -69,10 +90,11 @@ const formatDate = (dateTime) => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(gasto, index) in proyecto.gastos" :key="index" :class="index % 2 === 0 ? 'bg-gray-50' : ''">
+          <tr v-for="(gasto, index) in proyecto.gastos" :key="index" :class="index % 2 === 0 ? 'bg-gray-50' : ''" class="gasto-tabla">
             <td class="px-4 py-2">{{ gasto.id_factura }}</td>
             <td class="px-4 py-2">{{ formatDate(gasto.created_at) }}</td>
-            <td class="px-4 py-2">{{ gasto.nombre }}</td>
+            <td class="px-4 py-2 gasto-tabla-nombre">{{ gasto.nombre }}</td>
+            <td class="px-4 py-2">{{ gasto.observacion }}</td>
             <td class="px-4 py-2">{{ gasto.cantidad }}</td>
             <td class="px-4 py-2">{{ gasto.anadir_iva ? 'X' : '' }}</td>
             <td class="px-4 py-2">{{ gasto.cantidad_iva == 0 ? gasto.cantidad :  gasto.cantidad_iva}}</td>

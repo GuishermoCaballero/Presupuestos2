@@ -17,6 +17,7 @@ class Gasto extends Model
         'cantidad',
         'cantidad_iva',
         'anadir_iva',
+        'created_at'
     ];
 
     protected $appends = ['usuarios_id'];

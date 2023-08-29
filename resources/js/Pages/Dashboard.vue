@@ -1,8 +1,24 @@
 <script setup>
+import { ref } from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link, usePage } from "@inertiajs/vue3";
+import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+
 
 const { proyectos } = usePage().props; // Access the "proyectos" data passed from the controller.
+
+const searchTerm = ref("");
+
+// Computed property to filter projects based on the search term
+
+const form = useForm({
+  search: "",
+
+});
+
+const submit = () => {
+  form.get(route("dashboard"));
+};
 
 </script>
 
@@ -20,7 +36,28 @@ const { proyectos } = usePage().props; // Access the "proyectos" data passed fro
           Crear un proyecto
         </Link>
       </div>
+      <div class="py-4">
+      <form @submit.prevent="submit" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 flex"
+>
+        <input
+          v-model="form.search"
+          type="text"
+          placeholder="Buscar proyectos"
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+
+        />
+        <PrimaryButton
+          class="ml-4"
+          :class="{ 'opacity-25': form.processing }"
+          :disabled="form.processing"
+        >
+          Buscar
+        </PrimaryButton>
+      </form>
+  </div>
     </template>
+
+    
 
     <div class="py-12">
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">

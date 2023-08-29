@@ -67,6 +67,7 @@ class CantidadController extends Controller
                 'anadir_iva' => $request->anadir_iva,
                 'cantidad' => $request->cantidad,
                 'cantidad_iva' => ($request->anadir_iva == True ? $request->cantidad*1.21 : 0),
+                'created_at' =>$request->fecha
             ]);
 
             foreach($request->quien as $quien_id){

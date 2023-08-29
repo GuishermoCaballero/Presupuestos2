@@ -30,6 +30,7 @@ const cambio_form = useForm({
   cantidad: gasto.cantidad,
   anadir_iva: gasto.anadir_iva,
   quien: gasto.usuarios_id,
+  fecha: new Date(gasto.created_at).toISOString().substr(0, 10),
 
 });
 
@@ -85,7 +86,7 @@ const cambio_submit = () => {
                 <InputError class="mt-2" :message="cambio_form.errors.factura_id" />
               </div>
               <div class="mb-2">
-                <InputLabel for="nombre" value="Nombre" />
+                <InputLabel for="nombre" value="Nombre*" />
 
                 <TextInput
                   id="nombre"
@@ -107,7 +108,7 @@ const cambio_submit = () => {
               </div>
 
               <div class="mb-2">
-                <InputLabel for="cantidad" value="Cantidad" />
+                <InputLabel for="cantidad" value="Cantidad*" />
 
                 <TextInput
                   id="cantidad"
@@ -128,7 +129,7 @@ const cambio_submit = () => {
               </div>
 
               <div class="mb-2">
-                <InputLabel for="quien" value="Quien realiza el movimiento" />
+                <InputLabel for="quien" value="Quien realiza el movimiento*" />
 
                 <select
                   class="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring focus:ring-indigo-200"
@@ -147,6 +148,22 @@ const cambio_submit = () => {
                 </select>
 
                 <InputError class="mt-2" :message="cambio_form.errors.quien" />
+              </div>
+
+              <div class="mb-2">
+                <InputLabel for="quien" value="Fecha del movimiento" />
+
+                <TextInput
+                  id="cantidad"
+                  type="date"
+                  class="mt-1 block w-full"
+                  v-model="cambio_form.fecha"
+                  autofocus
+                  autocomplete="cantidad"
+                />
+
+
+                <InputError class="mt-2" :message="cambio_form.errors.fecha" />
               </div>
 
               <div class="flex items-center justify-end mt-4">

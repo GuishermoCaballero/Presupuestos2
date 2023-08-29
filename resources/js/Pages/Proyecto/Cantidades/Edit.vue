@@ -24,6 +24,7 @@ const cambio_form = useForm({
   cantidad: "",
   anadir_iva: false,
   quien: [],
+  fecha: new Date().toISOString().substr(0, 10),
 
 });
 
@@ -157,6 +158,23 @@ const cambio_submit = () => {
                 </select>
 
                 <InputError class="mt-2" :message="cambio_form.errors.quien" />
+              </div>
+
+
+              <div class="mb-2">
+                <InputLabel for="quien" value="Fecha del movimiento*" />
+
+                <TextInput
+                  id="cantidad"
+                  type="date"
+                  class="mt-1 block w-full"
+                  v-model="cambio_form.fecha"
+                  autofocus
+                  autocomplete="cantidad"
+                />
+
+
+                <InputError class="mt-2" :message="cambio_form.errors.fecha" />
               </div>
 
               <div class="flex items-center justify-end mt-4">

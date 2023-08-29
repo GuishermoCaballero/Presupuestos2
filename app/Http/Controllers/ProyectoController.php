@@ -25,10 +25,21 @@ class ProyectoController extends Controller
 
     public function index(Request $request): Response
     {
-
+        Log::info($request);
         $user = auth()->user();
 
         $proyectos = $user->proyectos_asignados();
+
+        if ($request->search) {
+            Log::info($proyectos);
+            $proyectos = $proyectos->filter(function ($proyecto) use ($request) {
+                return stripos($proyecto['nombre'], $request->search) !== false;
+            });
+            
+            Log::info($proyectos);
+            Log::info($request->search);
+        }
+        
 
         // Loop through the $proyectos array and update the image_url parameter
         foreach ($proyectos as $proyecto) {
