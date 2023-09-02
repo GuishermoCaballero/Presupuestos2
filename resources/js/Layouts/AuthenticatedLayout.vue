@@ -166,7 +166,7 @@ const showingNavigationDropdown = ref(false);
       </main>
 
       <footer class="bg-green-700 text-white py-4 bottom-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bottom-0">Presupuestos Granada. 2023</div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bottom-0">Gestión de proyectos de investigación. 2023</div>
       </footer>
     </div>
   </div>

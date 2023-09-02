@@ -9,7 +9,7 @@ import { Link } from '@inertiajs/vue3';
     <Link href="/">
         <ApplicationLogo class="w-20 h-20 fill-current text-gray-500" />
     </Link>
-    <span class="text-green-700 font-semibold text-lg ml-2">Presupuestos Granada</span>
+    <span class="text-green-700 font-semibold text-lg ml-2">Gestión de proyectos de investigación</span>
 </div>
 
 
