@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Gasto;
 use App\Models\Movimiento;
 use App\Models\Proyecto;
 use App\Models\ProyectoCantidad;
 use App\Models\ProyectoEtiqueta;
+use App\Models\ProyectoUsuario;
 use App\Models\User;
 use App\Models\UsuarioGasto;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -127,13 +129,20 @@ class ProyectoController extends Controller
     {
         $user = auth()->user();
 
-        $proyecto = Proyecto::with('etiquetas')->find($id);
+        $proyecto = Proyecto::find($id);
 
         // Check if the proyecto exists and belongs to the logged-in user
         if (!$proyecto || $proyecto->user_id !== $user->id) {
             abort(404); // Or handle the unauthorized action as needed
         }
+        $gastos = Gasto::where('proyecto_id', $proyecto->id)->get();
 
+        foreach($gastos as $gasto){
+            UsuarioGasto::where('gasto_id', $gasto->id)->delete();
+        }
+        Gasto::where('proyecto_id', $proyecto->id)->delete();
+        Movimiento::where('proyecto_id', $proyecto->id)->delete();
+        ProyectoUsuario::where('proyecto_id', $proyecto->id)->delete();
         // Perform the deletion
         $proyecto->delete();
 
