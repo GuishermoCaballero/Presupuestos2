@@ -123,13 +123,20 @@ class CantidadController extends Controller
             abort(403, 'Unauthorized action.');
         } */
 
-        $request->validate([
+       /*  $request->validate([
             'id' => ['required', 'numeric'],
             'factura_id' => ['required', 'string'],
             'nombre' => ['required', 'string'],
             'observacion' => ['required', 'string'],
             'anadir_iva' => ['required', 'boolean'],
             'cantidad' => ['required', 'numeric'],
+            'quien' => ['required', 'array'],
+        ]); */
+
+        $request->validate([
+            'nombre' => ['required', 'string'],
+            'anadir_iva' => ['required', 'boolean'],
+            'cantidad' => ['required','numeric','gt:0'],
             'quien' => ['required', 'array'],
         ]);
 
@@ -169,7 +176,7 @@ class CantidadController extends Controller
             $movimiento = Movimiento::create([
                 'proyecto_id' => $gasto->proyecto->id,
                 'user_id' => 1,
-                'valor' => 'Ha actualizado ' . ($gasto->id_factura ? $gasto->id_factura : $gasto->nombre ),
+                'valor' => 'Ha actualizado el gasto' . $gasto->nombre ,
             ]);
 
             session()->flash('success', 'Gasto actualizado correctamente');
